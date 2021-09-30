@@ -1,0 +1,160 @@
+select * from employees;
+
+select "FIRST_NAME","HIRE_DATE" from employees e 
+
+select "EMPLOYEE_ID" , "FIRST_NAME","HIRE_DATE" from employees e  where "SALARY" > 15000
+
+-------------
+select "EMPLOYEE_ID" , "FIRST_NAME","HIRE_DATE" from employees e where  "JOB_ID" = 'IT_PROG'
+
+---three query
+
+manager_id=103
+department_id=90 or 100
+all the employees who have been hired prior to 03-01-06
+
+
+select * from employees where "MANAGER_ID" = 103
+select * from employees where "DEPARTMENT_ID" = 90 or 100
+select * from employees where "HIRE_DATE" < '03-01-06'
+
+select * from employees
+--where department_id= 99  or department_id= 100
+--where manager_id =103
+where hire_date < '03-01-06'
+
+
+-------------ORDER by 
+
+select * from employees order by "SALARY";
+
+select * from employees order by "SALARY" desc;
+
+-- select * from employees order by "JOB_ID","SALARY" where "JOB_ID" = 'FI_ACCOUNT' 
+
+select * from employees  where "JOB_ID" = 'FI_ACCOUNT' order by "JOB_ID"
+
+
+select * from employees  where "JOB_ID" = 'FI_ACCOUNT' order by "JOB_ID","SALARY"
+
+------------aggregate functions
+
+sum, min,max,avg, count()
+
+select sum("SALARY") from employees
+select max("SALARY") from employees
+select min("SALARY") from employees
+select avg("SALARY") from employees
+select count("SALARY") from employees
+
+select max("HIRE_DATE") from employees
+select min("HIRE_DATE") from employees
+
+
+------------GROUP BY
+
+-------
+select count("EMPLOYEE_ID") from employees  
+
+
+select "DEPARTMENT_ID", count("EMPLOYEE_ID") from employees  
+group by "DEPARTMENT_ID"
+order by "DEPARTMENT_ID"
+
+--------I want to display department wise salary aggregate
+
+-- Sample output 
+
+60 76000
+90 98700
+
+select "DEPARTMENT_ID", sum("SALARY") from employees group by "DEPARTMENT_ID"
+order by "DEPARTMENT_ID"
+
+
+--------------------
+select * from employees
+
+select * from employees
+
+select "FIRST_NAME", "COMMISSION_PCT", "SALARY" as "MonthlySalary" , "SALARY"*12 as "AnnualSalary" from employees
+
+----
+select "FIRST_NAME", "COMMISSION_PCT", "SALARY" as "MonthlySalary" , "SALARY"*12 as "AnnualSalary" from employees
+
+
+select "FIRST_NAME", "COMMISSION_PCT","SALARY" ,
+"SALARY"/100*"COMMISSION_PCT"+"SALARY" as "MonthlySalary" , 
+"SALARY"*12 as "AnnualSalary" 
+from employees
+
+---------CORRECT 
+select "FIRST_NAME", "COMMISSION_PCT","SALARY" ,
+"SALARY"/100 * COALESCE("COMMISSION_PCT",0)  +"SALARY" as "MonthlySalary" , 
+"SALARY"*12 as "AnnualSalary" 
+from employees
+
+
+-------------------JOINS
+select "FIRST_NAME", "COMMISSION_PCT","SALARY","DEPARTMENT_NAME" from employees e natural join departments d ;
+
+
+--- INNER JOIN
+---USING
+select "FIRST_NAME", "COMMISSION_PCT","SALARY","DEPARTMENT_NAME" from employees e  join departments d 
+using ("MANAGER_ID");
+
+select "FIRST_NAME", "COMMISSION_PCT","SALARY","DEPARTMENT_NAME" from employees e  join departments d 
+using ("DEPARTMENT_ID");
+
+---ON 
+
+select "FIRST_NAME", "COMMISSION_PCT","SALARY","DEPARTMENT_NAME" from employees e  join departments d 
+on (e."EMPLOYEE_ID" = d."MANAGER_ID");
+
+------OUTER JOINS
+
+---Problems :
+
+select e."FIRST_NAME", e."COMMISSION_PCT",e."SALARY",d."DEPARTMENT_NAME" from employees e  join departments d 
+on (e."DEPARTMENT_ID" = d."DEPARTMENT_ID");
+
+---Solution
+select e."FIRST_NAME", e."COMMISSION_PCT",e."SALARY",d."DEPARTMENT_NAME" from employees e  left outer join departments d 
+on (e."DEPARTMENT_ID" = d."DEPARTMENT_ID");
+
+select e."FIRST_NAME", e."COMMISSION_PCT",e."SALARY",d."DEPARTMENT_NAME" from employees e  right outer join departments d 
+on (e."DEPARTMENT_ID" = d."DEPARTMENT_ID");
+
+
+select e."FIRST_NAME", e."COMMISSION_PCT",e."SALARY",d."DEPARTMENT_NAME" from employees e  FULL outer join departments d 
+on (e."DEPARTMENT_ID" = d."DEPARTMENT_ID");
+
+
+--------self join
+
+select e1."FIRST_NAME" || '  manages employee -  '  || e2."FIRST_NAME"  from employees e1 join employees e2
+on e1."EMPLOYEE_ID" = e2."MANAGER_ID" 
+
+-------------------VIEWS
+
+---Virtual table
+
+select * from employees e where  e."FIRST_NAME"  = 'Matthew'
+
+create or replace view my_colleagues
+as
+select e."FIRST_NAME" , e."PHONE_NUMBER" , e."EMAIL", e."DEPARTMENT_ID", e."SALARY"  
+from employees e where "DEPARTMENT_ID"  = 50 and "SALARY" > 6000
+with check option
+
+
+select * from my_colleagues
+
+update my_colleagues set "SALARY" = "SALARY" - 200 where "FIRST_NAME"  = 'Payam'
+
+update my_colleagues set "DEPARTMENT_ID" = 90 where "FIRST_NAME"  = 'Matthew'
+
+-------------------SUBQUERY
+
+
